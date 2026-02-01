@@ -36,7 +36,7 @@ def add_char_delay(lines: list) -> list:
         if len(verse) != 0:
             char_delay = round(delay / len(verse))
         else:
-            char_delay = 0
+            char_delay = delay
         if DEBUG: print(f"Added a delay of {char_delay} to {i+1}st line")
         # Adds the character delay
         lines[i]['char_delay'] = char_delay
@@ -50,7 +50,7 @@ def parse_text(lines: list) -> list:
 
     if DEBUG: print("Started parsing the text")
 
-    # Pattern used to match (genuinely no clue how this works just copied it :)
+    # Pattern used to match (genuinely no clue how this works just copied it :) )
     pattern = r'\[(\d{2}:\d{2}\.\d{2})\](.+)'
     new_lines = []
 
@@ -73,7 +73,7 @@ def parse_text(lines: list) -> list:
 
 def init() -> list:
 
-    search = "Ode to a conversation stuck in your throat Del water Gap"
+    search = "White Town - Your woman"
 
     if DEBUG: print(f"Started initiating")
     pygame.init()
@@ -85,16 +85,21 @@ def init() -> list:
     lines = parse_text(lyrics.split('\n'))
     return lines
 
-def start(lines: list) -> None:
+def start(lines: list, channel, sound) -> None:
     system('cls')
 
-    sound = pygame.mixer.Sound('.\Song\Del Water Gap - Ode to a Conversation Stuck in Your Throat (Official Video) - Del Water Gap.mp3')
-    sound.play()
+    channel.play(sound)
 
-    time.sleep(0.20)
+    while not channel.get_busy():
+        pass
     time.sleep(lines[0]['timestamp'] / 1000)
 
     for line in lines:
+        #This if-statement makes sure that the loop won't skip an empty verse (prob an instrumental part or a bridge or smth)
+        if not line['verse']:
+            time.sleep(line['char_delay'] / 1000)
+            print('')
+            continue
         for char in line['verse']:
             print(char, end='')
             sys.stdout.flush()
@@ -103,9 +108,20 @@ def start(lines: list) -> None:
 
 if __name__ == '__main__':
     lines = init()
+
+    pygame.mixer.set_num_channels(1)
+    channel = pygame.mixer.Channel(0)
+    sound = pygame.mixer.Sound(
+        '.\Song\White Town - Your Woman (Official HD Video) - Jyoti Mishra.mp3')
+
     if not DEBUG:
-        start(lines)
+        start(lines, channel, sound)
     else:
         print("\n Press Enter to Start")
         input()
-        start(lines)
+        start(lines, channel, sound)
+    while True:
+        if not channel.get_busy():
+            break
+        time.sleep(0.1)
+    print('end')

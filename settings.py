@@ -1,5 +1,5 @@
 from os.path import join
 
-DEBUG: bool = False
+DEBUG: bool = True
 
 SONG_FOLDER = join('.', 'Song')
