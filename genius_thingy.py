@@ -52,7 +52,7 @@ def parse_text(lines: list) -> list:
 
     if DEBUG: print("Started parsing the text")
 
-    # Pattern used to match (genuinely no clue how this works just copied it :) )
+    # Pattern used to find the timestamp
     verse_timestamp_pattern = r'\[(\d{2}:\d{2}\.\d{2})\](.+)'
     new_lines = []
 
